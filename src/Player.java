@@ -5,7 +5,7 @@ public class Player {
     
     private String name;
     private PlayerType playerType;
-    
+    private PlayerNumber playerNumber;
     
     //must know the board, what is legal moves, where it is relative to other stuff
     
@@ -13,6 +13,11 @@ public class Player {
 	public enum PlayerType {
         Bot, Human;
 	}
+	
+	public enum PlayerNumber {
+	    One, Two;
+	}
+	
 	private Player(){
 	    location = new Location(startingLocation);
 	}
@@ -26,7 +31,7 @@ public class Player {
 
 	    name = this.name;
 	    playerType = type;
-	    
+	   // TODO: set player number
 	}
 
 	/*
@@ -36,6 +41,10 @@ public class Player {
 	    return location;
 	}
 
+	public boolean isPlayerOne() {
+	    if (playerNumber.equals(PlayerNumber.One)) return true;
+	    return false;
+	}
 	
 	/*
 	 * Executes the players move disition by:

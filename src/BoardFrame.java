@@ -185,16 +185,38 @@ public class BoardFrame extends JFrame{
 		return infoPanel;
 	}
 	
-	private void setButtonColor(JButton button, Color color){
-	    //TODO:
-	}
-	
-	private void setButtonText(JButton button, String text){
-	    //TODO:
+	private void setButtonPoperties(JButton button, String text, Color color){
+	    
+	    button.setText(text);
+	    button.setBackground(color);
 	}
 	
 	public void setInfoLabelText(String text) {
 		JLabel infoLabel = (JLabel) this.infoPanel.getComponent(0);
 		infoLabel.setText(text);
+	}
+	
+	public void updateUI(Location location, Board.SquareState state) {
+	    
+	    int index = 4*location.x() + location.y();
+        
+        JButton button = (JButton) boardPanel.getComponent(index);
+        
+        switch ( board.squareState(row, column) ) {
+        case Free: 
+            break;
+        
+        case Player1: 
+            
+            setButtonProperties( button, , PLAYER1_COLOR);
+            break;
+            
+        case Player2; 
+        
+            setButtonColor( button, PLAYER2_COLOR);
+            setButtonText( (JButton) boardPanel.getComponent(index), PLAYER2_COLOR)
+            break;
+        }              
+	    
 	}
 }

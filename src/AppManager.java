@@ -41,6 +41,8 @@ public class AppManager {
 					
 					Object[] arrModes = Game.Mode.values();
 					
+					//Game object					
+					
 					if (isNewGame) {
 						
 						modeID = JOptionPane.showOptionDialog(
@@ -52,9 +54,7 @@ public class AppManager {
 											null,
 						                    arrModes,
 						                    arrModes[0]);
-						
-						
-						
+												
 					} else {
 						
 						/** Prompt to open game file **/
@@ -87,6 +87,8 @@ public class AppManager {
 					
 					Game.Mode mode = (Game.Mode) arrModes[modeID];
 
+					
+					Board board = new Board(7);
 					
 					// initially commented Game.Mode mode = Game.Mode.valueOf(selectionText); 
 					

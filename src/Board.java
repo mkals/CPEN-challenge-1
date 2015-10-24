@@ -10,17 +10,15 @@ public class Board {
     //(0,0) is defined as upper left corner
     private static SquareState[][] board;
     
-    private static int edgeWidth = 1;
-
     public static enum SquareState {
-        Unoccupied, PlayerOneCurrent, PlayerOnePast, PlayerTwoCurrent, PlayerTwoPast;  
+        Unoccupied, PlayerOne, PlayerTwo;  
     }
-    
-    private static String player1Name;
-    private static String player2Name;
+
+    private static Location playerOneLocation;
+    private static Location playerTwoLocation;
     
     public Board(int dimension) {
-	    board = new SquareState[dimension + edgeWidth*2][dimension + edgeWidth*2];
+	    board = new SquareState[dimension][dimension];
 	    	    
 	    //set entire board up to be Unoccupied
 	    for (SquareState[] row : board) {
@@ -32,59 +30,95 @@ public class Board {
     
 	/* direction is one of North, South, East and West. */
 	public List<Direction> getAvailableDirectionsAt(Location location){ 
-	    List<Direction> availableDirections = new ArrayList<Direction>();
+	   
+	    //assume all are available, and remove if not
+	    List<Direction> directions = new ArrayList<Direction>();
 	    
-	    //check north
-	    if (board[location.x()][location.y() - 1].equals(SquareState.Free)) {
-	        availableDirections.add(Direction.North);
-	    } 
+	    directions.add(Direction.North);
+	    directions.add(Direction.East);
+	    directions.add(Direction.South);
+	    directions.add(Direction.West);
+
 	    
-	    //check east
-        if (board[location.x() + 1][location.y()].equals(SquareState.Free)) {
-            availableDirections.add(Direction.East);
-        } 
-       
-        //check south
-        if (board[location.x()][location.y() + 1].equals(SquareState.Free)) {
-            availableDirections.add(Direction.South);
-        } 
+	    //check if valid coordinate
         
-        //check west
-        if (board[location.x() - 1][location.y()].equals(SquareState.Free)) {
-            availableDirections.add(Direction.West);
-        } 
-        
-	    return availableDirections;
+	    int maxIndexRow = maxRowIndex();
+	    int maxIndexColumn = maxColumnIndex();
+	    
+	    
+	    int row = location.y();
+	    int column = location.x();
+	    
+	    //check if invalid index north and south
+	    if (column < 0) {
+	        directions.remove(Direction.South);
+	    } else if (column > maxIndexColumn) {
+            directions.remove(Direction.North);
+        }
+	    
+	    //check if invalid index east and west
+	    if (row < 0) {
+            directions.remove(Direction.West);
+        } else if (row > maxIndexRow) {
+            directions.remove(Direction.East);
+        }
+	    
+	    
+	    if (directions.contains(Direction.North)) {
+	        if ( ! board[row - 1][column].equals(SquareState.Unoccupied) ) {
+	            directions.remove(Direction.North);
+	        }
+	    }
+	    
+	    if (directions.contains(Direction.East)) {
+            if ( ! board[row][column + 1].equals(SquareState.Unoccupied) ) {
+                directions.remove(Direction.East);
+            }
+        }
+	    
+	    if (directions.contains(Direction.South)) {
+            if ( ! board[row + 1][column].equals(SquareState.Unoccupied) ) {
+                directions.remove(Direction.South);
+            }
+        }
+	    
+	    if (directions.contains(Direction.West)) {
+            if ( ! board[row][column - 1].equals(SquareState.Unoccupied) ) {
+                directions.remove(Direction.West);
+            }
+        }
+	    
+	    return directions;
 	}
 		
-	public void playerPositionUpdated(String playerName, Location location) {
+	/*
+	 * precondition: must be a valid move
+	 * current position of player is updated internally
+	 */
+	public void playerPositionUpdated(Player player, Location location) {
 	    
 	    //update player position
-	    if (playerName.equals(player1Name)) {
-	        board[location.x()][location.y()] = SquareState.Player1;
-	    } else if (playerName.equals(player2Name)) {
-	        board[location.x()][location.y()] = SquareState.Player2;
+	    if (player.isPlayerOne()) {
+	        updateSquareInBoard(location, SquareState.PlayerOne);
+	    } else {
+            updateSquareInBoard(location, SquareState.PlayerTwo);
 	    } 
-	    
-	    //add player and set their initial position
-	    else if (player1Name.isEmpty()) {
-	        player1Name = playerName;
-	        board[location.x()][location.y()] = SquareState.Player1;
-	    } else if (player2Name.isEmpty()) {
-	        player2Name = playerName;
-	        board[location.x()][location.y()] = SquareState.Player2;
-	    } 
-	    
-	    //unrecognized player name, unrecoverable game state
-	    else {
-	        System.out.println("THRID PLAYER TRYED ACCESS, FATAL ERROR");
-	        //TODO: throw unchecked exception
-	    }
 	}
-
+	
+    private void updateSquareInBoard(Location location, SquareState state) {
+        
+        board[location.y()][location.x()] = state;
+        
+    }
+    	
+	
 	public int maxRowIndex() {
 	    return board.length - 1;
 	}
+	
+	public int maxColumnIndex() {
+        return board[0].length - 1;
+    }
 	
     public SquareState squareState(Location location) {
         return board[location.x()][location.y()];
