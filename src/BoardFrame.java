@@ -185,8 +185,12 @@ public class BoardFrame extends JFrame{
 		return infoPanel;
 	}
 	
-	private void setButtonPoperties(JButton button, String text, Color color){
+	private void updateButtonAtLocation(Location location, String text, Color color){
 	    
+	    int index = 4*location.x() + location.y();
+
+        JButton button = (JButton) boardPanel.getComponent(index);
+
 	    button.setText(text);
 	    button.setBackground(color);
 	}
@@ -196,27 +200,34 @@ public class BoardFrame extends JFrame{
 		infoLabel.setText(text);
 	}
 	
+	private Location previousPlayerOneLocation;
+	private Location previousPlayerTwoLocation;
+
 	public void updateUI(Location location, Board.SquareState state) {
 	    
-	    int index = 4*location.x() + location.y();
-        
-        JButton button = (JButton) boardPanel.getComponent(index);
-        
-        switch ( board.squareState(row, column) ) {
-        case Free: 
+        switch (state) {
+        case PlayerOne: 
+           
+            updateButtonAtLocation(location, "P1", PLAYER1_COLOR);  
+            if (previousPlayerOneLocation != null) {
+                updateButtonAtLocation(previousPlayerOneLocation, "", PLAYER1_COLOR);
+            }
+            previousPlayerOneLocation = location;
+
             break;
         
-        case Player1: 
+        case PlayerTwo: 
             
-            setButtonProperties( button, , PLAYER1_COLOR);
+            updateButtonAtLocation(location, "P2", PLAYER2_COLOR);  
+            if (previousPlayerTwoLocation != null) {
+                updateButtonAtLocation(previousPlayerTwoLocation, "", PLAYER2_COLOR);
+            }
+            previousPlayerTwoLocation = location;
+            
             break;
             
-        case Player2; 
-        
-            setButtonColor( button, PLAYER2_COLOR);
-            setButtonText( (JButton) boardPanel.getComponent(index), PLAYER2_COLOR)
+        default:
             break;
-        }              
-	    
+        }
 	}
 }
