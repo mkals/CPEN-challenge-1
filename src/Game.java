@@ -43,39 +43,78 @@ public class Game {
 	    
 	    switch (mode) {
 	    case TWO_PLAYER: 
-	        player1 = new Player("player1", Player.PlayerType.Human);
-	        player2 = new Player("player2", Player.PlayerType.Human);
+	        player1 = new Player("player1", Player.Type.Human);
+	        player2 = new Player("player2", Player.Type.Human);
 	        
 	        break;
 	    case ONE_PLAYER: 
-	        player1 = new Player("player1", Player.PlayerType.Human);
-	        player2 = new Player("player2", Player.PlayerType.Bot);
+	        player1 = new Player("player1", Player.Type.Human);
+	        player2 = new Player("player2", Player.Type.Bot);
 	            
 	        break;
 	    case BOT_BATTLE:
-            player1 = new Player("player1", Player.PlayerType.Bot);
-            player2 = new Player("player2", Player.PlayerType.Bot);	             
+            player1 = new Player("player1", Player.Type.Bot);
+            player2 = new Player("player2", Player.Type.Bot);	             
 	        
 	        break;
 	    }
+	    
+	    activePlayer = Player.Number.One;
 	}
 	
 	public Mode getMode() { 
 	    return gameMode; 
 	}
+		
+	public static void userInput(Location buttonLocation) {
+	    
+	    if (activePlayer.equals(Player.Number.One)) {
+	        if (player1.isValidMove(buttonLocation)) {
+	            player1.moveTo(player1, buttonLocation);
+	            nextPlayersMove();
+	        }
+	        
+	    } else {
+	        if (player2.isValidMove(buttonLocation)) {
+                player2.moveTo(player2, buttonLocation);
+                nextPlayersMove();
+            }	
+	    }
+	}
 	
-	public void userInput(Location buttonLocation) {
+	static Player.Number activePlayer;
+
+	private static void nextPlayersMove() {
 	    
-	    
+	    //toggle player
+        if (activePlayer.equals(Player.Number.One)) {
+            activePlayer = Player.Number.Two;
+            
+            if (player2.type().equals(Player.Type.Bot)) {
+                userInput(player2.makeMove(player1.getLocation())); //TODO: update to not make same checks
+            }
+        } else { 
+            activePlayer = Player.Number.One;
+            
+            if (player1.type().equals(Player.Type.Bot)) {
+                userInput(player1.makeMove(player2.getLocation())); //TODO: update to not make same checks
+            }
+        }
+        
+        if (isGameFinished()) {
+            //TODO: handle game state when game is over
+        }
+        
+        //if human, next input will be made by user 
 	}
 
-	public boolean isGameFinished() { 
+	public static boolean isGameFinished() { 
 	    
 	    if ( getWinner() != null ) return true;
 	    return false; 
 	}
 	
-	public Player getWinner() { 
+	public static Player getWinner() { 
 	    
 	    //TODO: implement getting the winner once game is finished
 	    

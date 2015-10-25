@@ -44,15 +44,11 @@ public class BoardFrame extends JFrame{
 	JPanel boardPanel  = null; 
 	JPanel infoPanel   = null;
 	
-	Game game;
-
 	/**
 	 * Create the application.
 	 */
-	public BoardFrame(int rowCount, int columnCount, Game.Mode mode, Game game) {
-		
-	    game = this.game;
-	    
+	public BoardFrame(int rowCount, int columnCount, Game.Mode mode) {
+			    
 		this.rowCount    = rowCount;
 		this.columnCount = columnCount;
 		this.title += " - " + mode.toString() + " Mode";
@@ -153,7 +149,7 @@ public class BoardFrame extends JFrame{
 	    	//event handler
             button.addActionListener(new ActionListener() {
 	    	    public void actionPerformed(ActionEvent e) {
-	    	        game.userInput(buttonLocaion);
+	    	        Game.userInput(buttonLocaion);
 	    	    }
 	    	});
 	    	
@@ -187,7 +183,7 @@ public class BoardFrame extends JFrame{
 	
 	private void updateButtonAtLocation(Location location, String text, Color color){
 	    
-	    int index = 4*location.x() + location.y();
+	    int index = 4*location.row() + location.column();
 
         JButton button = (JButton) boardPanel.getComponent(index);
 

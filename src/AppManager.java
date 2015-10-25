@@ -88,7 +88,7 @@ public class AppManager {
 					Game.Mode mode = (Game.Mode) arrModes[modeID];
 
 					
-					Board board = new Board(7);
+					Board board = new Board();
 					
 					// initially commented Game.Mode mode = Game.Mode.valueOf(selectionText); 
 					

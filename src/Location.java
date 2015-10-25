@@ -1,43 +1,60 @@
 
 public class Location {
     
-    private int xCoordinate;
-    private int yCoordinate;
+    private int storedColumn;
+    private int storedRow;
         
-    public Location(int x, int y) {
-        moveTo(x, y);
+    public Location(int column, int row) {
+        moveTo(column, row);
     }
     
     public Location(Location location) {
         moveTo(location);
     }
 
-    public void moveTo(int x, int y) {
-        xCoordinate = x;
-        yCoordinate = y;
+    public void moveTo(int column, int row) {
+        storedColumn = column;
+        storedRow = row;
     }
     
     public void moveTo(Location location) {
-        xCoordinate = location.xCoordinate;
-        yCoordinate = location.yCoordinate;
+        storedColumn = location.storedColumn;
+        storedRow = location.storedRow;
     }
     
     
-    //Access and set location variables separately
-    public int x() {
-        return xCoordinate;
+    //Access and set location variables separatelrow
+    public int column() {
+        return storedColumn;
     }
     
-    public int y() {
-        return yCoordinate;
+    public int row() {
+        return storedRow;
     }
     
-    public void x(int x) {
-        xCoordinate = x;
+    public void column(int column) {
+        storedColumn = column;
     }
     
-    public void y(int y) {
-        yCoordinate = y;
+    public void row(int row) {
+        storedRow = row;
     }
+    
+    public Location oneStepNorth() {
+        return new Location(storedColumn, storedRow - 1);
+    }
+
+    public Location oneStepEast() {
+        return new Location(storedColumn + 1, storedRow);
+    }
+    
+    public Location oneStepSouth() {
+        return new Location(storedColumn, storedRow + 1);
+    }
+    
+    public Location oneStepWest() {
+        return new Location(storedColumn - 1, storedRow);
+    }
+    
     
 }
