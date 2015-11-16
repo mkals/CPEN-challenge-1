@@ -1,13 +1,11 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -20,15 +18,18 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 public class BoardFrame extends JFrame{
+    
+    private static final long serialVersionUID = -7696309615576813843L;
 
-	private  String title           = "CPEN221 Game";
+    
+    private  String title = "CPEN221 Game";
+    
+    private Game GAME_INSTANCE;
 	
 	private final String PLAYER1_MARKER  = "P1";
 	private final String PLAYER2_MARKER  = "P2";
 	private String       PLAYER1_NAME    = "P1";
 	private String       PLAYER2_NAME    = "P2";
-
-	private final String STATUS = "";
 	
 	private final Color PLAYER1_COLOR  = Color.RED;
 	private final Color PLAYER2_COLOR  = Color.LIGHT_GRAY;
@@ -43,12 +44,14 @@ public class BoardFrame extends JFrame{
 	JPanel masterPanel = null;
 	JPanel boardPanel  = null; 
 	JPanel infoPanel   = null;
-	
+	JLabel statusLabel;
 	/**
 	 * Create the application.
 	 */
-	public BoardFrame(int rowCount, int columnCount, Game.Mode mode) {
-			    
+	public BoardFrame(int rowCount, int columnCount, Game.Mode mode, Game gameInstance) {
+	    
+	    GAME_INSTANCE = gameInstance;
+	    
 		this.rowCount    = rowCount;
 		this.columnCount = columnCount;
 		this.title += " - " + mode.toString() + " Mode";
@@ -128,13 +131,6 @@ public class BoardFrame extends JFrame{
 	    for (int i = 0; i < totalButtonCount; i++) {
 	    	String buttonText = "";
 	    	Color buttonColor = null;
-	    	if(i == this.columnCount/2) {
-	    		buttonText  = this.PLAYER2_MARKER;
-	    		buttonColor = this.PLAYER2_COLOR;
-	    	} else if (i == (totalButtonCount - this.columnCount/2 - 1)){
-	    		buttonText  = this.PLAYER1_MARKER;
-	    		buttonColor = this.PLAYER1_COLOR;
-	    	}
 	    	
 	    	JButton button = this.createButton(buttonColor, buttonText);
 	    	
@@ -149,7 +145,7 @@ public class BoardFrame extends JFrame{
 	    	//event handler
             button.addActionListener(new ActionListener() {
 	    	    public void actionPerformed(ActionEvent e) {
-	    	        Game.userInput(buttonLocaion);
+	    	        GAME_INSTANCE.userInput(buttonLocaion);
 	    	    }
 	    	});
 	    	
@@ -170,30 +166,22 @@ public class BoardFrame extends JFrame{
 	}
 	
 	private JPanel createInfoPanel() {
-		JPanel infoPanel = new JPanel();
+		infoPanel = new JPanel();
 		
 		//infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 		
-		JLabel label = new JLabel("Turn: " + this.PLAYER1_NAME);
-		label.setFont((new Font("Serif", Font.BOLD, 14)));
-		infoPanel.add(label);
+		statusLabel = new JLabel("Turn: " + this.PLAYER1_NAME);
+		statusLabel.setFont((new Font("Serif", Font.BOLD, 14)));
+		infoPanel.add(statusLabel);
 
 		return infoPanel;
 	}
 	
-	private void updateButtonAtLocation(Location location, String text, Color color){
+	public void updateInfoPanel(boolean turnOfPlayer1) {
+	    if (turnOfPlayer1) statusLabel.setText("Turn: " + this.PLAYER1_NAME);
+	    else statusLabel.setText("Turn: " + this.PLAYER2_NAME);
 	    
-	    int index = 4*location.row() + location.column();
-
-        JButton button = (JButton) boardPanel.getComponent(index);
-
-	    button.setText(text);
-	    button.setBackground(color);
-	}
-	
-	public void setInfoLabelText(String text) {
-		JLabel infoLabel = (JLabel) this.infoPanel.getComponent(0);
-		infoLabel.setText(text);
+	    
 	}
 	
 	private Location previousPlayerOneLocation;
@@ -201,10 +189,12 @@ public class BoardFrame extends JFrame{
 
 	public void updateUI(Location location, Board.SquareState state) {
 	    
+	    System.out.println("UI print: (" + location.row() + ", " + location.column() + ") state: " + state.name());
+	    
         switch (state) {
         case PlayerOne: 
            
-            updateButtonAtLocation(location, "P1", PLAYER1_COLOR);  
+            updateButtonAtLocation(location, PLAYER1_MARKER, PLAYER1_COLOR);  
             if (previousPlayerOneLocation != null) {
                 updateButtonAtLocation(previousPlayerOneLocation, "", PLAYER1_COLOR);
             }
@@ -214,7 +204,7 @@ public class BoardFrame extends JFrame{
         
         case PlayerTwo: 
             
-            updateButtonAtLocation(location, "P2", PLAYER2_COLOR);  
+            updateButtonAtLocation(location, PLAYER2_MARKER, PLAYER2_COLOR);  
             if (previousPlayerTwoLocation != null) {
                 updateButtonAtLocation(previousPlayerTwoLocation, "", PLAYER2_COLOR);
             }
@@ -226,4 +216,22 @@ public class BoardFrame extends JFrame{
             break;
         }
 	}
+	
+	private void updateButtonAtLocation(Location location, String text, Color color){
+        
+        int index = columnCount*location.row() + location.column();
+
+        JButton button = (JButton) boardPanel.getComponent(index);
+
+        button.setText(text);
+        button.setBackground(color);
+        
+        boardPanel.revalidate();
+        boardPanel.repaint();
+    }
+    
+    public void setInfoLabelText(String text) {
+        JLabel infoLabel = (JLabel) this.infoPanel.getComponent(0);
+        infoLabel.setText(text);
+    }
 }

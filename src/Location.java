@@ -4,17 +4,17 @@ public class Location {
     private int storedColumn;
     private int storedRow;
         
-    public Location(int column, int row) {
-        moveTo(column, row);
+    public Location(int row, int column) {
+        moveTo(row, column);
     }
     
     public Location(Location location) {
         moveTo(location);
     }
 
-    public void moveTo(int column, int row) {
-        storedColumn = column;
+    public void moveTo(int row, int column) {
         storedRow = row;
+        storedColumn = column;
     }
     
     public void moveTo(Location location) {
@@ -23,7 +23,7 @@ public class Location {
     }
     
     
-    //Access and set location variables separatelrow
+    //Access and set location variables 
     public int column() {
         return storedColumn;
     }
@@ -40,21 +40,34 @@ public class Location {
         storedRow = row;
     }
     
-    public Location oneStepNorth() {
-        return new Location(storedColumn, storedRow - 1);
-    }
+    
+    public Location oneStep(Direction direction) {
+        
+       switch (direction) {
+       
+       case North: 
+           return new Location(storedRow - 1, storedColumn);
 
-    public Location oneStepEast() {
-        return new Location(storedColumn + 1, storedRow);
+       case East:
+           return new Location(storedRow, storedColumn + 1);
+
+       case South:
+           return new Location(storedRow + 1, storedColumn);
+           
+       default:
+           return new Location(storedRow, storedColumn - 1);
+       }
     }
     
-    public Location oneStepSouth() {
-        return new Location(storedColumn, storedRow + 1);
+    @Override
+    public boolean equals(Object obj) {
+        
+        if (obj instanceof Location) {
+            Location location = (Location) obj;
+            
+            if (this.row() == location.row() && this.column() == location.column()) return true;
+        }
+        
+        return false;
     }
-    
-    public Location oneStepWest() {
-        return new Location(storedColumn - 1, storedRow);
-    }
-    
-    
 }

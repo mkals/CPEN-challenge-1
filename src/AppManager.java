@@ -14,6 +14,8 @@ public class AppManager {
 	 */
 	public static void main(String[] args) {
 		
+	    int BOARD_DIMENSION = 7;
+	    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -87,14 +89,10 @@ public class AppManager {
 					
 					Game.Mode mode = (Game.Mode) arrModes[modeID];
 
-					
-					Board board = new Board();
+					Game gameInstance = new Game(mode, BOARD_DIMENSION);
 					
 					// initially commented Game.Mode mode = Game.Mode.valueOf(selectionText); 
 					
-					BoardFrame window = new BoardFrame(7, 7, mode);
-					
-					window.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

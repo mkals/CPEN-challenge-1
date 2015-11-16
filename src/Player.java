@@ -1,44 +1,18 @@
 
 public class Player {
-	
-    private static Location startingLocation = new Location(1,1); //update
+	    
+    private boolean IS_PLAYER1;
     
-    private String name;
-    private Type playerType;
-    private Number playerNumber;
+    private Location playerLocation; 
     
-    //must know the board, what is legal moves, where it is relative to other stuff
-    
-    Type type() {
-        return playerType;
-    }
-    
-    Location playerLocation;    
-	public enum Type {
-        Bot, Human;
-	}
-	
-	public enum Number {
-	    One, Two;
-	}
-	
-	private Player(){
-	    playerLocation = new Location(startingLocation);
-	}
-		
-	/*
-	 * initializes player with name and type
-	 */
-	
-	public Player(String name, Type type){
-	    this();
 
-	    name = this.name;
-	    playerType = type;
-	   // TODO: set player number
+	public Player(boolean isPlayerOne, Location startingLocation, GameBoard board){
+	    this.IS_PLAYER1 = isPlayerOne;
+	    
+	    moveTo(startingLocation, board);
 	}
 
-	/*
+	/**
 	 * returns current location of player
 	 */
 	public Location getLocation(){
@@ -46,57 +20,42 @@ public class Player {
 	}
 
 	public boolean isPlayerOne() {
-	    if (playerNumber.equals(Number.One)) return true;
-	    return false;
+	    return IS_PLAYER1;
 	}
 	
-	/*
-	 * Executes the players move disition by:
+	/**
+	 * Executes the players move desition by:
 	 * - checking if location is available, using the availableLication method
 	 * - moving player to new location
 	 */
-	public boolean moveTo(Player player, Location location){ 
+	public boolean moveTo(Location location, GameBoard board){ 
 
-	    if (isValidMove(location)) {
-	        playerLocation = location;
-	        Board.playerPositionUpdated(player, playerLocation);
+	    if (isValidMove(location, board)) {
+	        playerLocation = new Location(location);
+	        board.playerPositionUpdated(this, playerLocation);
 	        return true;
 	    }
 	    
         return false;       
 	}	
 	
-	boolean isValidMove(Location newLocation) {
-	    
-	    if (Board.isUnoccupied(newLocation)) {
-	        if (playerLocation.oneStepNorth().equals(newLocation)) {
-	            return true; 
-	        } else if (playerLocation.oneStepEast().equals(newLocation)) {
-	            return true; 
-            } else if (playerLocation.oneStepSouth().equals(newLocation)) {
-                return true; 
-            } else if (playerLocation.oneStepWest().equals(newLocation)) {
-                return true; 
-            } 
+	public boolean moveIn(Direction direction, GameBoard board) {
+	    return moveTo(this.playerLocation.oneStep(direction), board);
+	}
+	
+	public boolean isValidMove(Location newLocation, GameBoard board) {
+	   
+	    if (board.isUnoccupied(newLocation)) {
+	        
+	        //for initialization when location is not set yet
+	        if (playerLocation == null) return true;
+	        
+	        //otherwise, to see if it is one step away from current player position
+	        for (Direction direction : Direction.values()) {
+	            if (playerLocation.oneStep(direction).equals(newLocation)) return true; 
+	        }
 	    }   
 	    
         return false;
 	}
-	
-	Location makeMove(Location oponentLocation) {
-	    return null;
-	}
-	
-	/*
-	 * Gets the current location of the opponent
-	 * 
-	 */
-	public Location getOpponentLocation(){ 
-	    
-	    return null;
-	}
-	
-	
-
 }
-
